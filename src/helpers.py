@@ -26,7 +26,8 @@ def load_dict(fname):
         _dict = pickle.load(f)
     return _dict
 
-def load_estimated_densities(fname = 'out/estimated_densities.csv', allowed_taurange = [0.01, 0.02], only_taus = False):
+
+def load_estimated_densities(fname = 'out/real_estimated_densities.csv', allowed_taurange = [0.01, 0.02], only_taus = False):
 
 
 
@@ -36,36 +37,38 @@ def load_estimated_densities(fname = 'out/estimated_densities.csv', allowed_taur
 
     if os.path.isfile(fname):
         spds = load_dict(fname)
-        print(spds)
 
         for key, (moneyness, gdom, gstar, spd) in spds.items():
-                
-                ysplit = str(key).split('_')
-                currtau = ysplit[1]
+                try:
+                    ysplit = str(key).split('_')
+                    currtau = ysplit[1]
 
-                if len(allowed_taurange) > 0:
-                    
-                    if float(currtau) >= allowed_taurange[0] and float(currtau) <= allowed_taurange[1]:
+                    if len(allowed_taurange) > 0:
+                        
+                        if float(currtau) >= allowed_taurange[0] and float(currtau) <= allowed_taurange[1]:
 
-                        if max(spd/gstar) < 6:
+                            if max(spd/gstar) < 6:
 
-                            # Extract Date and Tau from Dict Key
-                            date.append(ysplit[0]) # Day when instrument is traded
-                            tau.append(currtau) # Time to maturity as Decimal
-                            maturitydate.append(ysplit[2]) # Maturitydate of Instrument
+                                # Extract Date and Tau from Dict Key
+                                date.append(ysplit[0]) # Day when instrument is traded
+                                tau.append(currtau) # Time to maturity as Decimal
+                                maturitydate.append(ysplit[2]) # Maturitydate of Instrument
 
-                            x.append(moneyness)
-                            y.append(key)
-                            z.append(gstar)
-                            s.append(spd)
-                            pk.append(spd/gstar)
+                                x.append(moneyness)
+                                y.append(key)
+                                z.append(gstar)
+                                s.append(spd)
+                                pk.append(spd/gstar)
 
-                            print('loading tau: ', currtau)
-                            
+                                print('loading tau: ', currtau)
+                                
+                except Exception as e:
+                    print(e)
+                    print('next')
 
     if not only_taus:
         return x, z, s, pk, date, tau, maturitydate
 
     else:
         return tau
-        
+

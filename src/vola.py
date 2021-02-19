@@ -11,10 +11,10 @@ from pymongo.uri_parser import _TLSINSECURE_EXCLUDE_OPTS
 
 from brc import BRC
 
-def compute_vola(x):
+def compute_vola(x, window):
     # Annualizing daily SD should be ok aswell
 
-    window = 21  # trading days in rolling windoww
+    #window = 21  # trading days in rolling windoww
     dpy = 365 #252  # trading days per year
     ann_factor = dpy / window
 
@@ -55,18 +55,29 @@ if __name__ == '__main__':
         bids.append(currvalue['bid'])
         underlying.append(currvalue['underlying'])
 
-    vola = compute_vola(underlying) #* 100
+    dailyvola = compute_vola(underlying, 7) #* 100
+    rollingvola = compute_vola(underlying, 21)
         
     # Display only Monthly Dates
     locator = mdates.MonthLocator()  # every month
     # Specify the format - %b gives us Jan, Feb...
     fmt = mdates.DateFormatter('%b')
 
+    df = pd.DataFrame({'date': dates,
+                        'asks': [a/100 for a in asks],
+                        'bids': [b/100 for b in bids],
+                        'daily': dailyvola['real_vol'],
+                        'rolling': rollingvola['real_vol']})
+
+    df = df[:110]
+    print('subsetting until mid of july!')
+
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    plt.plot(dates, [a/100 for a in asks], label = 'Ask IV')
-    plt.plot(dates, [b/100 for b in bids], label = 'Bid IV')
-    plt.plot(dates, vola['real_vol'], label = 'Realized \nVolatility')
+    plt.plot(df['date'], df['asks'], label = 'Ask IV')
+    plt.plot(df['date'], df['bids'], label = 'Bid IV')
+    plt.plot(df['date'], df['daily'], label = '7 Day \nVolatility')
+    plt.plot(df['date'], df['rolling'], label = '21 Day \nVolatility')
     plt.title('Implied vs. Realized Volatility')
     #plt.ylabel('IV')
     plt.xlabel('Time')

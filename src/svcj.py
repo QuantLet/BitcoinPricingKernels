@@ -650,33 +650,22 @@ class SVCJ():
 
 
 if __name__ == '__main__':
-    #p = np.random.normal(size = 10000)
-    #print(p)
-    # pd.DataFrame(p).to_csv('random_prices_svcj.csv')
-    #params = pd.read_csv('svcjparams.csv')
 
     startdate = '2020-03-01' # Startdate for algo
     firstdate = '2018-01-01' # First date we accept in the BTCUSDT data
 
-    #prices_raw = pd.read_csv('data/BTC_USD_Quandl.csv')
-    #prices_raw['date'] = prices_raw['Timestamp'].apply(lambda x: datetime.datetime.fromtimestamp(x/1000))   
-    #price_raw['date'] = prices_raw['Date']
-    #p = prices_raw['Adj.Close'][prices_raw['date'] <= startdate]
-    
     prices_raw = pd.read_csv('data/BTC_USD_Quandl.csv')
     pr = prices_raw['Adj.Close'][(prices_raw['Date'] >= firstdate) & (prices_raw['Date'] <= startdate) & (prices_raw['Adj.Close'] > 0)]
     # Reverse prices...
     p = pr.iloc[::-1].to_list()
-    #print('prices: ', len(p))
-    #p = p[2001:]
     params = pd.read_csv('svcj_params.csv')
-    #p = pr.reindex(index=pr.index[::-1])
     
     # Calculate Vola per day in order to get V0
     _N = 1000
     s = SVCJ(prices = p, n = 100, N = _N)
-    #params, prices, vola = s.fit(prices = p, N = _N)
-    #pdb.set_trace()
+    s.fit(p, _N)
+    
     s0 = p[-1]
     
     sim_s, sim_v = s.simulate(params, s0, startdate)
+    print("done")

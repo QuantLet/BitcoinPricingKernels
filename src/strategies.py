@@ -130,7 +130,7 @@ class IronCondor:
         #  Put a legend to the right of the current axis
         ax2.legend(loc='center left', bbox_to_anchor=(1, 0.5))
 
-        fname = 'pricingkernel/plots/densities_vs_payoff_' + 'tau-' + str(self.tau) + '_date-' + str(self.date) + str(simmethod) + '.png'
+        fname = 'pricingkernel/plots/densities_vs_payoff_' + 'tau-' + str(self.tau) + '_date-' + str(self.date) + str(self.simmethod) + '.png'
         print(fname)
         plt.savefig(fname, transparent = False)
         plt.draw()
@@ -144,7 +144,7 @@ class IronCondor:
         center_idx = m.loc[m['gy'].idxmax(), 'x']
         center_comparison = m[m['gy'] == max(m['gy'])].x.values[0]
         min_quantile = 0 #m.spdy[m.spdy != 0].quantile(0.005)
-        # IST DER STRIKE FUER DIE PUTS HOEHER ALS DER CALL??
+        
         # Long Call
         m['long_call'] = 0
         m['long_call'][(m['spdy'] < m['gy']) & (m.x > center_idx) & (m['spdy'] > min_quantile)] = 1

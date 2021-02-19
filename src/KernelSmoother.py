@@ -2,6 +2,7 @@ from math import tau
 from scipy import optimize # Optimize Thetas
 import pandas as pd
 import numpy as np
+import pdb
 
 from helpers import load_estimated_densities, load_dict
 from functools import reduce # To merge list of data frames
@@ -50,7 +51,7 @@ class KernelSmoother:
 
     """
     def __init__(self, taurange):
-        x, z, s, pk, date, tau, maturitydate = load_estimated_densities(fname='out/estimated_densities.csv', allowed_taurange=taurange)#load_estimated_densities(allowed_taurange=[0.0163, 0.0165])#load_estimated_densities(allowed_taurange=[0.018, 0.02])
+        x, z, s, pk, date, tau, maturitydate = load_estimated_densities(fname='out/real_estimated_densities.csv', allowed_taurange=taurange)#load_estimated_densities(allowed_taurange=[0.0163, 0.0165])#load_estimated_densities(allowed_taurange=[0.018, 0.02])
         self.M = x
         self.T = len(x)
         self.t = list(range(self.T)) # Discrete Time Steps
@@ -293,9 +294,25 @@ class KernelSmoother:
         plt.plot(u, ara)
         plt.show()
 
-
-
-
+    def _plot_thetas(self, theta_tracker):
+        # Plot thetas
+        last_thetas = theta_tracker[-1]
+        fig=plt.figure()
+        ax=fig.add_subplot(111)
+        ax.xaxis.get_major_locator().set_params(integer=True)
+        plt.plot(last_thetas[0], label = 'theta 1')
+        plt.plot(last_thetas[1], label = 'theta 2')
+        plt.plot(last_thetas[2], label = 'theta 3')
+        plt.plot(last_thetas[3], label = 'theta 4')
+        # Shrink current axis by 20%
+        box = ax.get_position()
+        ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+        #  Put a legend to the right of the current axis
+        ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+        plt.xlabel('Pricing Kernel #')
+        plt.ylabel('Theta')
+        plt.savefig('pricingkernel/plots/thetas' + str(self.tau_in_days) + '.png', transparent = True)
+        return None
 
     def _run(self):
         
@@ -348,6 +365,7 @@ class KernelSmoother:
 
         # Absolute Risk Aversion
         #self.ara(K0_tracker[-1])
+        #pdb.set_trace()
 
         # Check K0tracker
         if np.mean(abs(K0_tracker[-1]['mean'] - K0_tracker[-2]['mean'])) < 0.001:
@@ -381,16 +399,24 @@ class KernelSmoother:
         plt.savefig('pricingkernel/plots/pricingkernel_nth_iteration' + str(self.tau_in_days) + str('long') + '.png', transparent = True)
         plt.draw()
 
+        self._plot_thetas(theta_tracker)
 
 
 if __name__ == '__main__':
     errors = []
     taus = load_estimated_densities(allowed_taurange = [0, 1], only_taus = True)
+    
+    #tau = 0.0219
+    #KS = KernelSmoother([float(tau)-0.0001, float(tau)+0.0001])
+    #KS._run()
+    
+    
     unique_taus = np.sort(np.unique(taus))
     for tau in unique_taus:
         try:
             KS = KernelSmoother([float(tau)-0.0001, float(tau)+0.0001])
             KS._run()
+
         except Exception as e:
             errors.append(e)
             print(e)
