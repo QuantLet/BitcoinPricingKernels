@@ -51,12 +51,8 @@ Generally:
 - Implied Binomial Trees
 - Historical SPD
 - Skewness / Kurtosis Trades
-
-todo: 
-    annualize returns!!
-    get realized variance! plot vs garch variance and vs implied volatility
     
-# can only read profit using pickle!!
+# Can only read profit using pickle!!
 
 """
 
