@@ -53,31 +53,6 @@ from src.helpers import save_dict, load_dict
 import rpy2.robjects.packages as rpackages
 
 
-"""
-
-@ Todo:
-1) Often, for higher maturities, finding an instrument in the strategy_range will fail because the spd is not interpolated!!
-2) Probability for realization of profit.
-
-From last session:
-make a film out of the hockey graphics, maybe also with moneyness on x axis
-boxplot for the multiple scatter plots (especially on put side as in example)
-convert .tex file to keynote
-correct epsilon, insert 'small' adj before infinitesimally
-
-Generally:
-- Implied Binomial Trees
-- Historical SPD
-- Skewness / Kurtosis Trades
-
-todo: 
-    annualize returns!!
-    get realized variance! plot vs garch variance and vs implied volatility
-    
-# can only read profit using pickle!!
-
-"""
-
 def gausskernel(x):
     return (1/np.sqrt(2 * np.pi)) * np.exp(- 0.5 * x**2)
 
