@@ -15,7 +15,7 @@ Keywords: Bitcoin, Pricing Kernel, Bitcoin Option, Option, Derivative, Pricing, 
 
 Author: Julian Winkel
 
-Submitted: 2020.02.19
+Submitted: 2020-02-19
 
 ```
 <div align="center">
